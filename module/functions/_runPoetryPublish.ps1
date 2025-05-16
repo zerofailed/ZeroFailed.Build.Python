@@ -7,9 +7,15 @@
     An internal wrapper function that runs 'poetry publish' and can be mocked in tests.
 .DESCRIPTION
     An internal wrapper function that runs 'poetry publish' and can be mocked in tests.
+.EXAMPLE
+    _runPoetryPublish
 #>
 
-function _runPoetryPublish {
+function _runPoetryPublish
+{
+    [CmdletBinding()]
+    param ()
+    
     & $script:PoetryPath `
         publish `
         @poetryGlobalArgs `

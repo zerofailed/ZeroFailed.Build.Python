@@ -7,8 +7,13 @@
     Invokes the Behave test runner for a Poetry project.
 .DESCRIPTION
     An internal wrapper function that runs PyTest for a Poetry project, which enables the functionality to be wrapped in try/finally block inside the calling task.
+.EXAMPLE
+    _runBehave
 #>
-function _runBehave {
+function _runBehave
+{
+    [CmdletBinding()]
+    param ()
 
     $testReportsPath = (Join-Path $here "behave-test-reports-temp")
     if (Test-Path $testReportsPath) {

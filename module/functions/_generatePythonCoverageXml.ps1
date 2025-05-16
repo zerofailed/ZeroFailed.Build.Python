@@ -7,8 +7,13 @@
     Invokes the Python code coverage report generator.
 .DESCRIPTION
     An internal wrapper function that runs Python code coverage report generator.
+.EXAMPLE
+    _generatePythonCoverageXml
 #>
-function _generatePythonCoverageXml {
+function _generatePythonCoverageXml
+{
+    [CmdletBinding()]
+    param ()
 
     exec {
         & $script:PoetryPath run `

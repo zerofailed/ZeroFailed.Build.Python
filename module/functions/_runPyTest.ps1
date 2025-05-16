@@ -7,8 +7,13 @@
     Invokes the PyTest test runner for a Poetry project.
 .DESCRIPTION
     An internal wrapper function that runs PyTest for a Poetry project, which enables the functionality to be wrapped in try/finally block inside the calling task.
+.EXAMPLE
+    _runPyTest
 #>
-function _runPyTest {
+function _runPyTest
+{
+    [CmdletBinding()]
+    param ()
 
     exec {
         & $script:PoetryPath run --no-interaction -v `
