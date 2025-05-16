@@ -1,6 +1,11 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
-. $here/$sut
+# <copyright file="Get-PythonPackagePreReleaseLabelFromSemVer.Tests.ps1" company="Endjin Limited">
+# Copyright (c) Endjin Limited. All rights reserved.
+# </copyright>
+
+BeforeAll {
+    # sut
+    . $PSCommandPath.Replace('.Tests.ps1','.ps1')
+}
 
 Describe "Get-PythonPackagePreReleaseLabelFromSemVer Tests" {
 
