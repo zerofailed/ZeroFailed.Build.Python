@@ -51,8 +51,21 @@ task InstallPythonPoetry -If { !$SkipInstallPythonPoetry } EnsurePython,{
 # Synopsis: Updates the Poetry lockfile without updating any packages. This is useful for local development scenarios to ensure that the lockfile is in sync with the pyproject.toml file.
 task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
     Write-Build White "Ensuring poetry.lock is up-to-date - no packages will be updated"
-    Push-Location $PythonProjectDir
-    exec { & $script:PoetryPath lock --no-update }
+
+    # Extract the Poetry version from the output of the --version command
+    # Example output: Poetry (version 1.8.0)
+    $poetryVersionMsg = & $script:PoetryPath --version
+    [semver]$poetryVersion = $poetryVersionMsg.Replace("Poetry (version ", "").Replace(")", "")
+
+    Set-Location $PythonProjectDir
+    if ($poetryVersion.Major -lt 2) {
+        # Poetry versions less v2.0.0 default to updating package versions
+        & $script:PoetryPath update --no-update
+    }
+    else {
+        # Poetry v2 and later will not update package versions by default
+        & $script:PoetryPath update
+    }
 }
 
 # Synopsis: Initialise the Python Poetry virtual environment.
