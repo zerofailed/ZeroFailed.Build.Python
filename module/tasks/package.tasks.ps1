@@ -5,7 +5,7 @@
 . $PSScriptRoot/package.properties.ps1
 
 # Synopsis: Build Python packages using Poetry. This task will build the packages and place them in the 'dist' directory.
-task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPackages } Version,EnsurePackagesDir,InitialisePythonPoetry,{
+task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPackages } -After PackageCore Version,EnsurePackagesDir,InitialisePythonPoetry,{
     if (Test-Path (Join-Path $PythonProjectDir "dist")) {
         Remove-Item (Join-Path $PythonProjectDir "dist") -Recurse -Force
     }
@@ -31,10 +31,15 @@ task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPa
     # Build the package(s)
     # For the moment we live with the fact that Poetry's output path is not configurable
     exec { & $script:PoetryPath build @poetryGlobalArgs }
+
+    # Copy the built packages to the output directory
+    $distPath = Join-Path $PythonProjectDir "dist"
+    Write-Build White "Copying Python packages: '$distPath' --> '$PackagesDir'"
+    Copy-Item -Path $distPath/*.whl -Destination $PackagesDir/ -Verbose
 }
 
 # Synopsis: Publishes the built Python packages to the specified repository.
-task PublishPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipPublishPythonPackages } InitialisePythonPoetry,{
+task PublishPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipPublishPythonPackages } -After PublishCore  InitialisePythonPoetry,{
 
     # Copy the Python packages from the standard packaging output folder to where Poetry expects to find them
     $distPath = Join-Path $PythonProjectDir "dist"
