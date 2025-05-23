@@ -19,7 +19,7 @@ function _runPoetryPublish
     & $script:PoetryPath `
         publish `
         @poetryGlobalArgs `
-        -u $PythonPublishUser `
+        -u $script:PythonPublishUsername `
         -p $env:PYTHON_PACKAGE_REPOSITORY_KEY `
-        -r $PythonRepositoryName
+        -r $script:PythonPackageRepositoryName
 }
