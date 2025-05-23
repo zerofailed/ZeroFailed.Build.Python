@@ -19,3 +19,6 @@ $PythonSourceDirectory = property ZF_BUILD_PYTHON_SRC_DIRECTORY "src"
 
 # Synopsis: The path to where Python Poetry is installed. By default the build will attempt to locate it via the PATH environment variable.
 $PoetryPath = property ZF_BUILD_PYTHON_POETRY_PATH ((Get-Command poetry -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path) ?? "")
+
+# Synopsis: The arguments passed to the Python flake8 linter, override to customise its behaviour. Default is "-v".
+$PythonFlake8Args = "-v"

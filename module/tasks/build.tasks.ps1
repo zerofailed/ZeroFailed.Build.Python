@@ -93,7 +93,7 @@ task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialiseP
     Write-Build White "Running flake8"
     # Explicitly change directory as Flake8 does not run when Poetry has the '--directory' argument
     Set-Location $PythonProjectDir
-    exec { & $script:PoetryPath run --no-interaction -v flake8 src -vv }
+    exec { & $script:PoetryPath run --no-interaction -v flake8 src $PythonFlake8Args }
 }
 
 # Synopsis: Runs the Python build process.
