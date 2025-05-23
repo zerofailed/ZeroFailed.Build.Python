@@ -17,6 +17,9 @@ $PythonProjectDir = property ZF_BUILD_PYTHON_PROJECT_PATH ""
 # Synopsis: The path to where the Python source code is located. Default is "./src" relative to the build script.
 $PythonSourceDirectory = property ZF_BUILD_PYTHON_SRC_DIRECTORY "src"
 
+# Synopsis: The version of Python Poetry to install, if not already available. Default is the latest version.
+$PythonPoetryVersion = property POETRY_VERSION ""
+
 # Synopsis: The path to where Python Poetry is installed. By default the build will attempt to locate it via the PATH environment variable.
 $PoetryPath = property ZF_BUILD_PYTHON_POETRY_PATH ((Get-Command poetry -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path) ?? "")
 

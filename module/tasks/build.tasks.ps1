@@ -21,6 +21,7 @@ task InstallPythonPoetry -If { !$SkipInstallPythonPoetry } EnsurePython,{
         #  - On build servers we install within the working directory to ensure it's part of the build agent caching
         #  - Otherwise, we install to the user profile directory in a cross-platform way
         $env:POETRY_HOME ??= $IsRunningOnBuildServer ? (Join-Path $here ".poetry") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".poetry")
+        $env:POETRY_VERSION = $PythonPoetryVersion
         $poetryBinPath = Join-Path $env:POETRY_HOME "bin"
 
         # If the poetry binary is not found, install it
