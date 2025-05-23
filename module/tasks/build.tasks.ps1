@@ -32,7 +32,7 @@ task InstallPythonPoetry -If { !$SkipInstallPythonPoetry } EnsurePython,{
             Remove-Item get-poetry.py -Force
         }
         
-        # Ensure the poetry tool is avaliable to the rest of the build process
+        # Ensure the poetry tool is availiable to the rest of the build process
         $script:PoetryPath = Join-Path $poetryBinPath "poetry"
         Write-Build Green "Poetry now available: $PoetryPath"
         if ($poetryBinPath -notin ($env:PATH -split [System.IO.Path]::PathSeparator)) {

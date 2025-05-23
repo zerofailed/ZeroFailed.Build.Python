@@ -8,7 +8,7 @@ $SkipInstallPythonPoetry = [Convert]::ToBoolean((property ZF_BUILD_PYTHON_SKIP_I
 # Synopsis: When true, the build will not run 'poetry install' to initialise the virtual environment.
 $SkipInitialisePythonPoetry = [Convert]::ToBoolean((property ZF_BUILD_PYTHON_SKIP_INIT_POETRY $false))
 
-# Synopsis: When truue, the build will not run the flake8 linter.
+# Synopsis: When true, the build will not run the flake8 linter.
 $SkipRunFlake8 = [Convert]::ToBoolean((property ZF_BUILD_PYTHON_SKIP_RUN_FLAKE8 $false))
 
 # Synopsis: The root path of the Python project. For example, this is used to locate the 'pyproject.toml' file.

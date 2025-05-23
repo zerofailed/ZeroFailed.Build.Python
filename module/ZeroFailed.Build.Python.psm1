@@ -1,4 +1,4 @@
-# <copyright file="ZeroFailed.Build.Python.psd1" company="Endjin Limited">
+# <copyright file="ZeroFailed.Build.Python.psm1" company="Endjin Limited">
 # Copyright (c) Endjin Limited. All rights reserved.
 # </copyright>
 

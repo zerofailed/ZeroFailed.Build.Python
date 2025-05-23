@@ -90,7 +90,7 @@ Describe "'$moduleName' Module Tests" {
             $errors.Count | Should -Be 0
         }
 
-        It "<function> should have tests" -Skip:$isPrivateFunction {
+        It "<function> should have tests" {
             if (!$isPrivateFunction) {
                 $functionTestsPath | Should -Exist
             }
