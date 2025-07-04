@@ -25,7 +25,7 @@ CompanyName = 'Endjin Limited'
 Copyright = '(c) endjin. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'An extension for ZeroFailed with build-related features for Python scenarios'
+Description = 'An extension for ZeroFailed with build-related features for Python projects'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.0'
@@ -90,7 +90,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("ZeroFailed")
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/zerofailed/ZeroFailed.Build.Python/blob/main/LICENSE'
@@ -114,6 +114,18 @@ PrivateData = @{
         ExternalModuleDependencies = @()
 
     } # End of PSData hashtable
+
+    # ZeroFailed metadata
+    ZeroFailed = @{
+        ExtensionDependencies = @(
+            @{
+                # Assume latest stable version
+                Name = "ZeroFailed.Build.Common"
+                GitRepository = "https://github.com/zerofailed/ZeroFailed.Build.Common"
+                Process = "tasks/build.process.ps1"
+            }
+        )
+    }
 
 } # End of PrivateData hashtable
 
