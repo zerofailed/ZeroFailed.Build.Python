@@ -33,7 +33,7 @@ $PythonPoetryVersion = property POETRY_VERSION ""
 $PoetryPath = property ZF_BUILD_PYTHON_POETRY_PATH ((Get-Command poetry -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path) ?? "")
 
 # Synopsis: The version of uv to use for the build. Default is the latest version.
-$PythonUvVersion = property ZF_BUILD_PYTHON_UV_VERSION "uv"
+$PythonUvVersion = property ZF_BUILD_PYTHON_UV_VERSION ""
 
 # Synopsis: The arguments passed to the Python flake8 linter, override to customise its behaviour. Default is "-v".
 $PythonFlake8Args = "-v"
