@@ -16,10 +16,10 @@ function _runUvPublish
     [CmdletBinding()]
     param ()
     
-    & $script:UvPath `
+    & $script:PythonUvPath `
         publish `
         @uvGlobalArgs `
         -u $script:PythonPublishUsername `
         -p $env:PYTHON_PACKAGE_REPOSITORY_KEY `
-        ---publish-url $script:PythonPackageRepositoryUrl
+        --publish-url $script:PythonPackageRepositoryUrl --verbose
 }

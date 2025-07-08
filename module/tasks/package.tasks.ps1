@@ -53,13 +53,22 @@ task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPa
 task PublishPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipPublishPythonPackages } -After PublishCore  InitialisePythonPoetry,InitialisePythonUv,{
 
     # Copy the Python packages from the standard packaging output folder to where Poetry/uv expects to find them
-    $distPath = Join-Path $PythonProjectDir "dist"
-    $pythonPackages = gci $distPath/$PythonPackagesFilenameFilter
+    $distPath = Join-Path $PythonProjectDir "dist/"
+
+    if (!(Test-Path $distPath)) {
+        New-Item -Path $distPath -ItemType Directory | Out-Null
+    }
+
+    $pythonPackages = Get-ChildItem $PackagesDir/$PythonPackagesFilenameFilter -ErrorAction SilentlyContinue
 
     if (!$pythonPackages ) {
         Write-Warning "No Python packages found, skipping publish"
+        return
     }
-    elseif (!$PythonPackageRepositoryUrl) {
+
+    Copy-Item -Path $pythonPackages -Destination $distPath -Force
+
+    if (!$PythonPackageRepositoryUrl) {
         Write-Warning "PythonPackageRepositoryUrl build variable not set, skipping publish"
     }
     elseif (!$UseAzCliAuthForAzureArtifacts -and !$env:PYTHON_PACKAGE_REPOSITORY_KEY) {
