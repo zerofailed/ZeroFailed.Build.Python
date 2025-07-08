@@ -13,10 +13,10 @@
 function _generatePythonCoverageXml
 {
     [CmdletBinding()]
-    param ()
+    param ($ToolPath)
 
     exec {
-        & $script:PoetryPath run `
+        & $ToolPath run `
             coverage `
             xml `
             -o $PythonCoverageReportPath

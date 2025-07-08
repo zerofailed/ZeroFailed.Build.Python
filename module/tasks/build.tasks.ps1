@@ -70,7 +70,7 @@ task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
 }
 
 # Synopsis: Initialise the Python Poetry virtual environment.
-task InitialisePythonPoetry -If { $PythonProjectDir -ne "" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
+task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
     }
@@ -89,6 +89,36 @@ task InitialisePythonPoetry -If { $PythonProjectDir -ne "" -and !$SkipInitialise
     exec { & $script:PoetryPath install @poetryGlobalArgs --with dev,test }
 }
 
+task InstallPythonUv -If { $SkipInstallPythonPoetry } {
+
+    $existingUv = Get-Command uv -ErrorAction SilentlyContinue
+    if (!$existingUv) {
+        # If the uv binary is not found, install it
+        if (!(Test-Path (Join-Path $uvBinPath "uv"))) {
+            Write-Build White "Installing uv $env:UV_VERSION"
+            Invoke-RestMethod https://astral.sh/uv/$env:UV_VERSION/install.ps1 | Invoke-Expression
+        }
+    }
+    else {
+        $script:PythonUvPath = $existingUv.Path
+        Write-Build Green "uv already installed: $PythonUvPath"
+    }
+}
+
+task UpdateUvLockfile -If { !$IsRunningOnBuildServer } InstallPythonUv,{
+    Write-Build White "Ensuring uv.lock is up-to-date - no packages will be updated"
+
+    exec { & $script:PythonUvPath lock }
+}
+
+task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" -and !$SkipInitialisePythonUv } InstallPythonUv,UpdateUvLockfile,{
+    if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
+        throw "pyproject.toml not found in $PythonProjectDir"
+    }
+
+    exec { & $script:PythonUvPath sync }
+}
+
 # Synopsis: Run the flake8 linter on the Python source code.
 task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialisePythonPoetry,{
     Write-Build White "Running flake8"
@@ -98,4 +128,4 @@ task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialiseP
 }
 
 # Synopsis: Runs the Python build process.
-task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,RunFlake8
+task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,InstallPythonUv,RunFlake8
