@@ -5,7 +5,7 @@
 . $PSScriptRoot/package.properties.ps1
 
 # Synopsis: Build Python packages using Poetry. This task will build the packages and place them in the 'dist' directory.
-task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPackages } -After PackageCore Version,EnsurePackagesDir,InitialisePythonPoetry,{
+task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPackages } -After PackageCore Version,EnsurePackagesDir,InitialisePythonPoetry,InitialisePythonUv,{
     if (Test-Path (Join-Path $PythonProjectDir "dist")) {
         Remove-Item (Join-Path $PythonProjectDir "dist") -Recurse -Force
     }
@@ -25,7 +25,7 @@ task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPa
 
     Write-Build White "Building Python packages with version: $pythonPackageVersion"
     if ($PythonProjectManager -eq "uv") {
-        exec { & $script:UvPath version $pythonPackageVersion }
+        exec { & $script:PythonUvPath version @uvGlobalArgs $pythonPackageVersion }
     }
     elseif ($PythonProjectManager -eq "poetry") {
         exec { & $script:PoetryPath version @poetryGlobalArgs $pythonPackageVersion }
@@ -36,7 +36,7 @@ task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPa
 
     # Build the package(s)
     if ($PythonProjectManager -eq "uv") {
-        exec { & $script:UvPath build --wheel --out-dir $PackagesDir }
+        exec { & $script:PythonUvPath build --wheel --out-dir $PackagesDir }
     }
     elseif ($PythonProjectManager -eq "poetry") {
         # For the moment we live with the fact that Poetry's output path is not configurable
@@ -50,7 +50,7 @@ task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPa
 }
 
 # Synopsis: Publishes the built Python packages to the specified repository.
-task PublishPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipPublishPythonPackages } -After PublishCore  InitialisePythonPoetry,{
+task PublishPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipPublishPythonPackages } -After PublishCore  InitialisePythonPoetry,InitialisePythonUv,{
 
     # Copy the Python packages from the standard packaging output folder to where Poetry/uv expects to find them
     $distPath = Join-Path $PythonProjectDir "dist"

@@ -5,7 +5,7 @@
 . $PSScriptRoot/test.properties.ps1
 
 # Synopsis: Runs any PyTest and/or Behave tests in the Python source code.
-task RunPythonTests -If { $PythonProjectDir -ne "" || ($SkipRunPyTest && $SkipRunBehave) } -After TestCore InitialisePythonPoetry,{
+task RunPythonTests -If { $PythonProjectDir -ne "" || ($SkipRunPyTest && $SkipRunBehave) } -After TestCore InitialisePythonPoetry,InitialisePythonUv,{
 
     Write-Build White "Removing previous Python coverage results"
     # Explicitly change directory as 'coverage erase' does not run when Poetry has the '--directory' argument
@@ -27,7 +27,9 @@ task RunPythonTests -If { $PythonProjectDir -ne "" || ($SkipRunPyTest && $SkipRu
                 Write-Build White "Running PyTest..."
 
                 if ($PythonProjectManager -eq "uv") {
-                    $runParams = @()
+                    $runParams = @(
+                        "--verbose"
+                    )
                 }
                 elseif ($PythonProjectManager -eq "poetry") {
                     $runParams = @(
