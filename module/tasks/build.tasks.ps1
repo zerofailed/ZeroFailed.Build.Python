@@ -70,7 +70,7 @@ task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
 }
 
 # Synopsis: Initialise the Python Poetry virtual environment.
-task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and!$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
+task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
     }
