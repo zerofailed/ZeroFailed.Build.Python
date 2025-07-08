@@ -89,7 +89,7 @@ task InitialisePythonPoetry -If { !$SkipInitialisePythonPoetry } InstallPythonPo
     exec { & $script:PoetryPath install @poetryGlobalArgs --with dev,test }
 }
 
-task InstallPythonUv -If { $SkipInstallPythonPoetry } {
+task InstallPythonUv -If { !$SkipInstallPythonUv } {
 
     $existingUv = Get-Command uv -ErrorAction SilentlyContinue
     if (!$existingUv) {
