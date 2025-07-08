@@ -101,7 +101,12 @@ task InstallPythonUv -If { !$SkipInstallPythonUv } {
         # If the uv binary is not found, install it
         if (!(Test-Path (Join-Path $uvBinPath "uv"))) {
             Write-Build White "Installing uv $env:UV_VERSION"
-            Invoke-RestMethod https://astral.sh/uv/$env:UV_VERSION/install.ps1 | Invoke-Expression
+            if ($IsWindows) {
+                Invoke-RestMethod https://astral.sh/uv/$env:UV_VERSION/install.ps1 | Invoke-Expression
+            }
+            else {
+                Invoke-RestMethod https://astral.sh/uv/$env:UV_VERSION/install.sh | bash
+            }
 
             # Ensure the uv tool is available to the rest of the build process
             $script:UvPath = Join-Path $uvBinPath "uv"
