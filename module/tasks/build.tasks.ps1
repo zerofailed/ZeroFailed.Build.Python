@@ -128,4 +128,4 @@ task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialiseP
 }
 
 # Synopsis: Runs the Python build process.
-task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,InstallPythonUv,RunFlake8
+task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,InitialisePythonUv,RunFlake8
