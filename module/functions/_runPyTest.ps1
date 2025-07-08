@@ -16,7 +16,7 @@ function _runPyTest
     param ($ToolPath, $RunParams = @())
 
     exec {
-        & $ToolPath run $RunParams `
+        & $ToolPath run @RunParams `
             pytest `
             --cov=$PythonSourceDirectory `
             --cov-report= `
