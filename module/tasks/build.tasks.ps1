@@ -143,7 +143,7 @@ task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and !$SkipInitiali
     $script:uvGlobalArgs = @(
         "--project=$PythonProjectDir"
     )
-    Write-Build White "poetryGlobalArgs: $uvGlobalArgs"
+    Write-Build White "uvGlobalArgs: $uvGlobalArgs"
 
     exec { & $script:PythonUvPath sync @uvGlobalArgs }
 }
