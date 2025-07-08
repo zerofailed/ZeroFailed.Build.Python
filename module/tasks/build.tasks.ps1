@@ -98,6 +98,10 @@ task InstallPythonUv -If { $SkipInstallPythonPoetry } {
             Write-Build White "Installing uv $env:UV_VERSION"
             Invoke-RestMethod https://astral.sh/uv/$env:UV_VERSION/install.ps1 | Invoke-Expression
         }
+
+        $uv = Get-Command uv -ErrorAction SilentlyContinue
+        $script:PythonUvPath = $uv.Path
+        Write-Build Green "uv now available: $PythonUvPath"
     }
     else {
         $script:PythonUvPath = $existingUv.Path
