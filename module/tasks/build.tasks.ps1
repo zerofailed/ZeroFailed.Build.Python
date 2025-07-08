@@ -70,7 +70,7 @@ task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
 }
 
 # Synopsis: Initialise the Python Poetry virtual environment.
-task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
+task InitialisePythonPoetry -If { !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
     }
@@ -111,7 +111,7 @@ task UpdateUvLockfile -If { !$IsRunningOnBuildServer } InstallPythonUv,{
     exec { & $script:PythonUvPath lock }
 }
 
-task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" -and !$SkipInitialisePythonUv } InstallPythonUv,UpdateUvLockfile,{
+task InitialisePythonUv -If { !$SkipInitialisePythonUv } InstallPythonUv,UpdateUvLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
     }
@@ -128,4 +128,7 @@ task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialiseP
 }
 
 # Synopsis: Runs the Python build process.
-task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,InitialisePythonUv,RunFlake8
+task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore BuildPythonPoetry,BuildPythonUv,RunFlake8
+
+task BuildPythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry
+task BuildPythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonUv
