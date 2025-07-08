@@ -13,7 +13,7 @@
 function _runBehave
 {
     [CmdletBinding()]
-    param ()
+    param ($ToolPath)
 
     $testReportsPath = (Join-Path $here "behave-test-reports-temp")
     if (Test-Path $testReportsPath) {
@@ -24,7 +24,7 @@ function _runBehave
 
     try {
         exec {
-            & $script:PoetryPath run `
+            & $ToolPath run `
                 coverage `
                 run `
                 --append `
@@ -38,7 +38,7 @@ function _runBehave
     }
     finally {
         exec {
-            & $script:PoetryPath run junitparser merge --glob $testReportsPath/*.xml $BehaveResultsPath
+            & $ToolPath run junitparser merge --glob $testReportsPath/*.xml $BehaveResultsPath
         }
     }
 }
