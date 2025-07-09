@@ -70,7 +70,7 @@ task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
 }
 
 # Synopsis: Initialise the Python Poetry virtual environment.
-task InitialisePythonPoetry -If { $PythonProjectDir -ne "" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
+task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$SkipInitialisePythonPoetry } InstallPythonPoetry,UpdatePoetryLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
     }
@@ -89,13 +89,81 @@ task InitialisePythonPoetry -If { $PythonProjectDir -ne "" -and !$SkipInitialise
     exec { & $script:PoetryPath install @poetryGlobalArgs --with dev,test }
 }
 
+task InstallPythonUv -If { !$SkipInstallPythonUv } {
+    # The install script will honour this environment variable. If not explicitly set, we set it to:
+    #  - On build servers we install within the working directory to ensure it's part of the build agent caching
+    #  - Otherwise, we install to the user profile directory in a cross-platform way
+    $env:UV_INSTALL_DIR ??= $IsRunningOnBuildServer ? (Join-Path $here ".uv") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".uv")
+    $uvBinPath = $env:UV_INSTALL_DIR
+
+    $existingUv = Get-Command uv -ErrorAction SilentlyContinue
+    if (!$existingUv) {
+        # If the uv binary is not found, install it
+        if (!(Test-Path (Join-Path $uvBinPath "uv"))) {
+            Write-Build White "Installing uv $PythonUvVersion"
+            if ($IsWindows) {
+                Invoke-RestMethod https://astral.sh/uv/$PythonUvVersion/install.ps1 | Invoke-Expression
+            }
+            else {
+                Invoke-RestMethod https://astral.sh/uv/$PythonUvVersion/install.sh | bash
+            }
+
+            # Ensure the uv tool is available to the rest of the build process
+            $script:PythonUvPath = Join-Path $uvBinPath "uv"
+            Write-Build Green "uv now available: $UvPath"
+            if ($uvBinPath -notin ($env:PATH -split [System.IO.Path]::PathSeparator)) {
+                Write-Build White "Adding uv to PATH: $uvBinPath"
+                $env:PATH = "$uvBinPath{0}$env:PATH" -f [System.IO.Path]::PathSeparator
+            }
+        }
+        else {
+            $script:PythonUvPath = $existingUv.Path
+            Write-Build Green "uv already installed: $PythonUvPath"
+        }
+    }
+    else {
+        # Ensure $PythonUvPath is set if uv was already available in the PATH
+        $script:PythonUvPath = $existingUv.Path
+        Write-Build Green "uv already installed: $PythonUvPath"
+    }
+}
+
+task UpdateUvLockfile -If { !$IsRunningOnBuildServer } InstallPythonUv,{
+    Write-Build White "Ensuring uv.lock is up-to-date - no packages will be updated"
+
+    exec { & $script:PythonUvPath lock --project=$PythonProjectDir }
+}
+
+task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and !$SkipInitialisePythonUv } InstallPythonUv,UpdateUvLockfile,{
+    if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
+        throw "pyproject.toml not found in $PythonProjectDir"
+    }
+
+    # Define the global uv arguments we will use for all uv commands
+    $script:uvGlobalArgs = @(
+        "--project=$PythonProjectDir"
+    )
+    Write-Build White "uvGlobalArgs: $uvGlobalArgs"
+
+    exec { & $script:PythonUvPath sync @uvGlobalArgs }
+}
+
 # Synopsis: Run the flake8 linter on the Python source code.
-task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialisePythonPoetry,{
+task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialisePythonPoetry,InitialisePythonUv,{
     Write-Build White "Running flake8"
     # Explicitly change directory as Flake8 does not run when Poetry has the '--directory' argument
     Set-Location $PythonProjectDir
-    exec { & $script:PoetryPath run --no-interaction -v flake8 src $PythonFlake8Args }
+
+    if ($PythonProjectManager -eq "uv") {
+        exec { & $script:PythonUvPath run flake8 src $PythonFlake8Args }
+    }
+    elseif ($PythonProjectManager -eq "poetry") {
+        exec { & $script:PoetryPath run --no-interaction -v flake8 src $PythonFlake8Args }
+    }
 }
 
 # Synopsis: Runs the Python build process.
-task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry,RunFlake8
+task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore BuildPythonPoetry,BuildPythonUv,RunFlake8
+
+task BuildPythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry
+task BuildPythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonUv

@@ -13,10 +13,10 @@
 function _runPyTest
 {
     [CmdletBinding()]
-    param ()
+    param ($ToolPath, $RunParams = @())
 
     exec {
-        & $script:PoetryPath run --no-interaction -v `
+        & $ToolPath run @RunParams `
             pytest `
             --cov=$PythonSourceDirectory `
             --cov-report= `
