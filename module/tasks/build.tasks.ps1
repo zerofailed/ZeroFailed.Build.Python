@@ -86,7 +86,14 @@ task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$Skip
     )
     Write-Build White "poetryGlobalArgs: $poetryGlobalArgs"
 
-    exec { & $script:PoetryPath install @poetryGlobalArgs --with dev,test }
+    if ($IsRunningOnBuildServer ) {
+        Write-Build Green "Installing dependencies for CI environment ('$($PoetryInstallCicdArgs -join " ")')"
+        exec { & $script:PoetryPath install @poetryGlobalArgs @PoetryInstallCicdArgs }
+    }
+    else {
+        Write-Build Green "Installing dependencies for local environment ('$($PoetryInstallArgs -join " ")')"
+        exec { & $script:PoetryPath install @poetryGlobalArgs @PoetryInstallArgs }
+    }
 }
 
 task InstallPythonUv -If { !$SkipInstallPythonUv } {
@@ -145,7 +152,14 @@ task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and !$SkipInitiali
     )
     Write-Build White "uvGlobalArgs: $uvGlobalArgs"
 
-    exec { & $script:PythonUvPath sync @uvGlobalArgs }
+    if ($IsRunningOnBuildServer ) {
+        Write-Build Green "Installing dependencies for CI environment ('$($UvSyncCicdArgs -join " ")')"
+        exec { & $script:PythonUvPath sync @uvGlobalArgs @UvSyncCicdArgs }
+    }
+    else {
+        Write-Build Green "Installing dependencies for local environment ('$($UvSyncArgs -join " ")')"
+        exec { & $script:PythonUvPath sync @uvGlobalArgs @UvSyncArgs }
+    }
 }
 
 # Synopsis: Run the flake8 linter on the Python source code.
