@@ -37,3 +37,15 @@ $PythonUvVersion = property ZF_BUILD_PYTHON_UV_VERSION ""
 
 # Synopsis: The arguments passed to the Python flake8 linter, override to customise its behaviour. Default is "-v".
 $PythonFlake8Args = "-v"
+
+# Synopsis: Array of the default arguments passed to 'poetry install', override to customise its behaviour. Default is "--all-groups".
+$PoetryInstallArgs = @("--all-groups")
+
+# Synopsis: Array of the arguments passed to 'poetry install' when running on CI/CD servers, override to customise its behaviour. Default is @("--without", "dev").
+$PoetryInstallCicdArgs = @("--without", "dev")
+
+# Synopsis: Array of the default arguments passed to 'uv sync', override to customise its behaviour. Default is "--all-groups".
+$UvSyncArgs = @("--all-groups")
+
+# Synopsis: Array of the arguments passed to 'uv sync' when running on CI/CD servers, override to customise its behaviour. Default is @("--no-dev").
+$UvSyncCicdArgs = @("--no-dev")
