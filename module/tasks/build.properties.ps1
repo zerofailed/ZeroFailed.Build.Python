@@ -39,7 +39,7 @@ $PythonUvVersion = property ZF_BUILD_PYTHON_UV_VERSION ""
 $PythonFlake8Args = "-v"
 
 # Synopsis: Array of the default arguments passed to 'poetry install', override to customise its behaviour. Default is "--all-groups".
-$PoetryInstallArgs = @("--all-groups")
+$PoetryInstallArgs = @()
 
 # Synopsis: Array of the arguments passed to 'poetry install' when running on CI/CD servers, override to customise its behaviour. Default is @("--without", "dev").
 $PoetryInstallCicdArgs = @("--without", "dev")
