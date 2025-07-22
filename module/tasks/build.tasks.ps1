@@ -86,13 +86,22 @@ task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$Skip
     )
     Write-Build White "poetryGlobalArgs: $poetryGlobalArgs"
 
+    # Handle the addition of the preferred 'sync' command in later versions of Poetry
+    if ($poetryVersion.Major -lt 2) {
+        $poetryInstallCmd = "install"
+    }
+    else {
+        $poetryInstallCmd = "sync"
+    }
+    Write-Build White "poetryInstallCommand: $poetryInstallCmd"
+
     if ($IsRunningOnBuildServer ) {
         Write-Build Green "Installing dependencies for CI environment ('$($PoetryInstallCicdArgs -join " ")')"
-        exec { & $script:PoetryPath install @poetryGlobalArgs @PoetryInstallCicdArgs }
+        exec { & $script:PoetryPath $poetryInstallCmd @poetryGlobalArgs @PoetryInstallCicdArgs }
     }
     else {
         Write-Build Green "Installing dependencies for local environment ('$($PoetryInstallArgs -join " ")')"
-        exec { & $script:PoetryPath install @poetryGlobalArgs @PoetryInstallArgs }
+        exec { & $script:PoetryPath $poetryInstallCmd @poetryGlobalArgs @PoetryInstallArgs }
     }
 }
 
