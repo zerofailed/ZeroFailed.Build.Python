@@ -61,11 +61,11 @@ task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
     Set-Location $PythonProjectDir
     if ($poetryVersion.Major -lt 2) {
         # Poetry versions less v2.0.0 default to updating package versions
-        & $script:PoetryPath update --no-update
+        & $script:PoetryPath lock --no-update
     }
     else {
         # Poetry v2 and later will not update package versions by default
-        & $script:PoetryPath update
+        & $script:PoetryPath lock
     }
 }
 
