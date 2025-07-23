@@ -20,7 +20,7 @@ task InstallPythonPoetry -If { !$SkipInstallPythonPoetry } EnsurePython,{
         # The install script will honour this environment variable. If not explicitly set, we set it to:
         #  - On build servers we install within the working directory to ensure it's part of the build agent caching
         #  - Otherwise, we install to the user profile directory in a cross-platform way
-        $env:POETRY_HOME ??= $IsRunningOnBuildServer ? (Join-Path $here ".poetry") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".poetry")
+        $env:POETRY_HOME ??= $IsRunningOnCICDServer ? (Join-Path $here ".poetry") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".poetry")
         $env:POETRY_VERSION = $PythonPoetryVersion
         $poetryBinPath = Join-Path $env:POETRY_HOME "bin"
 
@@ -50,7 +50,7 @@ task InstallPythonPoetry -If { !$SkipInstallPythonPoetry } EnsurePython,{
 }
 
 # Synopsis: Updates the Poetry lockfile without updating any packages. This is useful for local development scenarios to ensure that the lockfile is in sync with the pyproject.toml file.
-task UpdatePoetryLockfile -If { !$IsRunningOnBuildServer } InstallPythonPoetry,{
+task UpdatePoetryLockfile -If { !$IsRunningOnCICDServer } InstallPythonPoetry,{
     Write-Build White "Ensuring poetry.lock is up-to-date - no packages will be updated"
 
     # Extract the Poetry version from the output of the --version command
@@ -95,7 +95,7 @@ task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$Skip
     }
     Write-Build White "poetryInstallCommand: $poetryInstallCmd"
 
-    if ($IsRunningOnBuildServer ) {
+    if ($IsRunningOnCICDServer ) {
         Write-Build Green "Installing dependencies for CI environment ('$($PoetryInstallCicdArgs -join " ")')"
         exec { & $script:PoetryPath $poetryInstallCmd @poetryGlobalArgs @PoetryInstallCicdArgs }
     }
@@ -109,7 +109,7 @@ task InstallPythonUv -If { !$SkipInstallPythonUv } {
     # The install script will honour this environment variable. If not explicitly set, we set it to:
     #  - On build servers we install within the working directory to ensure it's part of the build agent caching
     #  - Otherwise, we install to the user profile directory in a cross-platform way
-    $env:UV_INSTALL_DIR ??= $IsRunningOnBuildServer ? (Join-Path $here ".uv") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".uv")
+    $env:UV_INSTALL_DIR ??= $IsRunningOnCICDServer ? (Join-Path $here ".uv") : (Join-Path ($IsWindows ? $env:USERPROFILE : $env:HOME) ".uv")
     $uvBinPath = $env:UV_INSTALL_DIR
 
     $existingUv = Get-Command uv -ErrorAction SilentlyContinue
@@ -144,7 +144,7 @@ task InstallPythonUv -If { !$SkipInstallPythonUv } {
     }
 }
 
-task UpdateUvLockfile -If { !$IsRunningOnBuildServer } InstallPythonUv,{
+task UpdateUvLockfile -If { !$IsRunningOnCICDServer } InstallPythonUv,{
     Write-Build White "Ensuring uv.lock is up-to-date - no packages will be updated"
 
     exec { & $script:PythonUvPath lock --project=$PythonProjectDir }
@@ -161,7 +161,7 @@ task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and !$SkipInitiali
     )
     Write-Build White "uvGlobalArgs: $uvGlobalArgs"
 
-    if ($IsRunningOnBuildServer ) {
+    if ($IsRunningOnCICDServer ) {
         Write-Build Green "Installing dependencies for CI environment ('$($UvSyncCicdArgs -join " ")')"
         exec { & $script:PythonUvPath sync @uvGlobalArgs @UvSyncCicdArgs }
     }
