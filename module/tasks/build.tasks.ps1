@@ -126,15 +126,17 @@ task InstallPythonUv -If { !$SkipInstallPythonUv } {
 
             # Ensure the uv tool is available to the rest of the build process
             $script:PythonUvPath = Join-Path $uvBinPath "uv"
-            Write-Build Green "uv now available: $UvPath"
-            if ($uvBinPath -notin ($env:PATH -split [System.IO.Path]::PathSeparator)) {
-                Write-Build White "Adding uv to PATH: $uvBinPath"
-                $env:PATH = "$uvBinPath{0}$env:PATH" -f [System.IO.Path]::PathSeparator
-            }
+            Write-Build Green "uv now available: $PythonUvPath"
         }
         else {
-            $script:PythonUvPath = $existingUv.Path
+            # Ensure the uv tool is available to the rest of the build process
+            $script:PythonUvPath = Join-Path $uvBinPath "uv"
             Write-Build Green "uv already installed: $PythonUvPath"
+        }
+
+        if ($uvBinPath -notin ($env:PATH -split [System.IO.Path]::PathSeparator)) {
+            Write-Build White "Adding uv to PATH: $uvBinPath"
+            $env:PATH = "$uvBinPath{0}$env:PATH" -f [System.IO.Path]::PathSeparator
         }
     }
     else {
