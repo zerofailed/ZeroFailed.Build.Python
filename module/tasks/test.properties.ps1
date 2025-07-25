@@ -8,10 +8,10 @@ $SkipRunPyTest = [Convert]::ToBoolean((property ZF_BUILD_PYTHON_SKIP_RUN_PYTEST 
 # Synopsis: When true, the build will not run any Behave tests.
 $SkipRunBehave = [Convert]::ToBoolean((property ZF_BUILD_PYTHON_SKIP_RUN_BEHAVE $false))
 
-# Synopsis: The path where the PyTest test results XML file will be written. Default is "./pytest-test-results.xml" relative to the build script.
+# Synopsis: The path where the PyTest test results XML file will be written.
 $PyTestResultsPath = property ZF_BUILD_PYTHON_PYTEST_RESULTS_PATH (Join-Path $here "pytest-test-results.xml")
 
-# Synopsis: The path where the Behave test results XML file will be written. Default is "./behave-test-results.xml" relative to the build script.
+# Synopsis: The path where the Behave test results XML file will be written.
 $BehaveResultsPath = property ZF_BUILD_PYTHON_BEHAVE_RESULTS_PATH (Join-Path $here "behave-test-results.xml")
 
 # Synopsis: The path where the Python code coverage XML report will be written.

@@ -105,7 +105,8 @@ task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$Skip
     }
 }
 
-task InstallPythonUv -If { !$SkipInstallPythonUv } {
+# Synopsis: Installs UV if it is not already installed. UV is a dependency management tool for Python.
+task InstallPythonUv -If { !$SkipInstallPythonUv } EnsurePython,{
     # The install script will honour this environment variable. If not explicitly set, we set it to:
     #  - On build servers we install within the working directory to ensure it's part of the build agent caching
     #  - Otherwise, we install to the user profile directory in a cross-platform way
@@ -146,12 +147,14 @@ task InstallPythonUv -If { !$SkipInstallPythonUv } {
     }
 }
 
+# Synopsis: Updates the UV lockfile without updating any packages. This is useful for local development scenarios to ensure that the lockfile is in sync with the pyproject.toml file.
 task UpdateUvLockfile -If { !$IsRunningOnCICDServer } InstallPythonUv,{
     Write-Build White "Ensuring uv.lock is up-to-date - no packages will be updated"
 
     exec { & $script:PythonUvPath lock --project=$PythonProjectDir }
 }
 
+# Synopsis: Initialise the UV virtual environment.
 task InitialisePythonUv -If { $PythonProjectManager -eq "uv" -and !$SkipInitialisePythonUv } InstallPythonUv,UpdateUvLockfile,{
     if (!(Test-Path (Join-Path $PythonProjectDir "pyproject.toml"))) {
         throw "pyproject.toml not found in $PythonProjectDir"
@@ -187,8 +190,11 @@ task RunFlake8 -If { $PythonProjectDir -ne "" -and !$SkipRunFlake8 } InitialiseP
     }
 }
 
-# Synopsis: Runs the Python build process.
+# Synopsis: Wrapper task for the overall Python build process.
 task BuildPython -If { $PythonProjectDir -ne "" } -After BuildCore BuildPythonPoetry,BuildPythonUv,RunFlake8
 
-task BuildPythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonPoetry
-task BuildPythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" } -After BuildCore InitialisePythonUv
+# Synopsis: Wrapper task for the Poetry-based build process.
+task BuildPythonPoetry -If { $PythonProjectManager -eq "poetry" -and $PythonProjectDir -ne "" } InitialisePythonPoetry
+
+# Synopsis: Wrapper task for the UV-based build process.
+task BuildPythonUv -If { $PythonProjectManager -eq "uv" -and $PythonProjectDir -ne "" } InitialisePythonUv

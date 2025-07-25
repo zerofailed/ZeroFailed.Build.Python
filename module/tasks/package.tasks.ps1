@@ -4,7 +4,7 @@
 
 . $PSScriptRoot/package.properties.ps1
 
-# Synopsis: Build Python packages using Poetry. This task will build the packages and place them in the 'dist' directory.
+# Synopsis: Build Python packages using Poetry or UV. This task will build the packages and place them in the 'dist' directory.
 task BuildPythonPackages -If { $PythonProjectDir -ne "" -and !$SkipBuildPythonPackages } -After PackageCore Version,EnsurePackagesDir,InitialisePythonPoetry,InitialisePythonUv,{
     if (Test-Path (Join-Path $PythonProjectDir "dist")) {
         Remove-Item (Join-Path $PythonProjectDir "dist") -Recurse -Force
