@@ -1,5 +1,10 @@
 # ZeroFailed.Build.Python
 
+[![Build Status](https://github.com/zerofailed/ZeroFailed.Build.Python/actions/workflows/build.yml/badge.svg)](https://github.com/zerofailed/ZeroFailed.Build.Python/actions/workflows/build.yml)  
+[![GitHub Release](https://img.shields.io/github/release/zerofailed/ZeroFailed.Build.Python.svg)](https://github.com/zerofailed/ZeroFailed.Build.Python/releases)  
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/Endjin.ZeroFailed.Build?color=blue)](https://www.powershellgallery.com/packages/ZeroFailed.Build.Python)  
+[![License](https://img.shields.io/github/license/zerofailed/ZeroFailed.Build.Python.svg)](https://github.com/zerofailed/ZeroFailed.Build.Python/blob/main/LICENSE)
+
 A [ZeroFailed](https://github.com/endjin/ZeroFailed) extension containing features that support build processes for Python projects.
 
 ## Features Overview
