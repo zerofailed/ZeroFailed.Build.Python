@@ -23,10 +23,10 @@ $PythonProjectManager = property ZF_BUILD_PYTHON_PROJECT_MANAGER "poetry"
 # Synopsis: The root path of the Python project. For example, this is used to locate the 'pyproject.toml' file.
 $PythonProjectDir = property ZF_BUILD_PYTHON_PROJECT_PATH ""
 
-# Synopsis: The path to where the Python source code is located. Default is "./src" relative to the build script.
+# Synopsis: The path to where the Python source code is located.
 $PythonSourceDirectory = property ZF_BUILD_PYTHON_SRC_DIRECTORY "src"
 
-# Synopsis: The version of Python Poetry to install, if not already available. Default is the latest version.
+# Synopsis: The version of Python Poetry to install, if not already available.
 $PythonPoetryVersion = property POETRY_VERSION ""
 
 # Synopsis: The path to where Python Poetry is installed. By default the build will attempt to locate it via the PATH environment variable.
@@ -35,17 +35,17 @@ $PoetryPath = property ZF_BUILD_PYTHON_POETRY_PATH ((Get-Command poetry -ErrorAc
 # Synopsis: The version of uv to use for the build. Default is the latest version.
 $PythonUvVersion = property ZF_BUILD_PYTHON_UV_VERSION ""
 
-# Synopsis: The arguments passed to the Python flake8 linter, override to customise its behaviour. Default is "-v".
+# Synopsis: The arguments passed to the Python flake8 linter, override to customise its behaviour.
 $PythonFlake8Args = "-v"
 
-# Synopsis: Array of the default arguments passed to 'poetry install', override to customise its behaviour. Default is "--all-groups".
+# Synopsis: Array of the default arguments passed to 'poetry install', override to customise its behaviour.
 $PoetryInstallArgs = @()
 
-# Synopsis: Array of the arguments passed to 'poetry install' when running on CI/CD servers, override to customise its behaviour. Default is @("--without", "dev").
+# Synopsis: Array of the arguments passed to 'poetry install' when running on CI/CD servers, override to customise its behaviour.
 $PoetryInstallCicdArgs = @("--without", "dev")
 
-# Synopsis: Array of the default arguments passed to 'uv sync', override to customise its behaviour. Default is "--all-groups".
+# Synopsis: Array of the default arguments passed to 'uv sync', override to customise its behaviour.
 $UvSyncArgs = @("--all-groups")
 
-# Synopsis: Array of the arguments passed to 'uv sync' when running on CI/CD servers, override to customise its behaviour. Default is @("--no-dev").
+# Synopsis: Array of the arguments passed to 'uv sync' when running on CI/CD servers, override to customise its behaviour.
 $UvSyncCicdArgs = @("--no-dev")
