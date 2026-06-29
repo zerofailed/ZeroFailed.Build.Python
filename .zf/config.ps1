@@ -13,6 +13,7 @@ $zerofailedExtensions = @(
 # Set the required build options
 $PesterTestsDir = "$here/module"
 $PesterVersion = "5.7.1"
+$PesterCodeCoverageEnabled = $false
 $PowerShellModulesToPublish = @(
     @{
         ModulePath = "$here/module/ZeroFailed.Build.Python.psd1"
