@@ -1,4 +1,4 @@
-#Requires -Version 7.1
+#Requires -Version 7.4
 <#
 .SYNOPSIS
     Runs the ZeroFailed build process for this repository.
