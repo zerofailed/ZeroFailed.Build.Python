@@ -53,7 +53,7 @@ param (
     [string] $ZfModulePath,
 
     [Parameter()]
-    [string] $ZfModuleVersion = "2.0.1",
+    [string] $ZfModuleVersion = "2.0.3",
 
     [Parameter()]
     [string] $ZfModuleRepository = "https://nuget.pkg.github.com/zerofailed/index.json",
