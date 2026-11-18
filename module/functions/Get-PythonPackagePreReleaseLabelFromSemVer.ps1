@@ -24,6 +24,8 @@
     beta
 
     This command returns 'b' as the Python package pre-release label for a beta version.
+.LINK
+    https://peps.python.org/pep-0440/#pre-releases
 #>
 function Get-PythonPackagePreReleaseLabelFromSemVer
 {
