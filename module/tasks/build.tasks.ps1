@@ -56,10 +56,10 @@ task UpdatePoetryLockfile -If { !$IsRunningOnCICDServer } InstallPythonPoetry,{
     # Extract the Poetry version from the output of the --version command
     # Example output: Poetry (version 1.8.0)
     $poetryVersionMsg = & $script:PoetryPath --version
-    [semver]$poetryVersion = $poetryVersionMsg.Replace("Poetry (version ", "").Replace(")", "")
+    [semver]$script:poetryVersion = $poetryVersionMsg.Replace("Poetry (version ", "").Replace(")", "")
 
     Set-Location $PythonProjectDir
-    if ($poetryVersion.Major -lt 2) {
+    if ($script:poetryVersion.Major -lt 2) {
         # Poetry versions less v2.0.0 default to updating package versions
         & $script:PoetryPath lock --no-update
     }
@@ -87,7 +87,7 @@ task InitialisePythonPoetry -If { $PythonProjectManager -eq "poetry" -and !$Skip
     Write-Build White "poetryGlobalArgs: $poetryGlobalArgs"
 
     # Handle the addition of the preferred 'sync' command in later versions of Poetry
-    if ($poetryVersion.Major -lt 2) {
+    if ($script:poetryVersion.Major -lt 2) {
         $poetryInstallCmd = "install"
     }
     else {
