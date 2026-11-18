@@ -46,7 +46,7 @@ This command returns 'rc' as the Python package pre-release label for a release 
 ### EXAMPLE 2
 
 Get-PythonPackagePreReleaseLabelFromSemVer -PreReleaseLabel "beta"
-beta
+b
 
 This command returns 'b' as the Python package pre-release label for a beta version.
 
