@@ -12,7 +12,12 @@ $zerofailedExtensions = @(
 
 # Set the required build options
 $PesterTestsDir = "$here/module"
-$PesterCodeCoveragePaths = @("$here/module/functions")
+# Measure coverage of the module's own logic only. The '_*' functions are thin wrappers around
+# external tools (poetry, uv, pytest, behave, az) and exist so that they can be mocked in tests.
+$PesterCodeCoveragePaths = @(
+    Get-ChildItem -Path "$here/module/functions/*.ps1" -Exclude '_*', '*.Tests.ps1' |
+        Select-Object -ExpandProperty FullName
+)
 $PowerShellModulesToPublish = @(
     @{
         ModulePath = "$here/module/ZeroFailed.Build.Python.psd1"
