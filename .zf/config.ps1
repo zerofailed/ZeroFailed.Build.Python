@@ -12,8 +12,12 @@ $zerofailedExtensions = @(
 
 # Set the required build options
 $PesterTestsDir = "$here/module"
-$PesterVersion = "5.7.1"
-$PesterCodeCoverageEnabled = $false
+# Measure coverage of the module's own logic only. The '_*' functions are thin wrappers around
+# external tools (poetry, uv, pytest, behave, az) and exist so that they can be mocked in tests.
+$PesterCodeCoveragePaths = @(
+    Get-ChildItem -Path "$here/module/functions/*.ps1" -Exclude '_*', '*.Tests.ps1' |
+        Select-Object -ExpandProperty FullName
+)
 $PowerShellModulesToPublish = @(
     @{
         ModulePath = "$here/module/ZeroFailed.Build.Python.psd1"
@@ -22,6 +26,28 @@ $PowerShellModulesToPublish = @(
         AliasesToExport = @()
     }
 )
+$PowerShellRepositories = @(
+    @{
+        Name = 'PSGallery'
+        ApiKey = { $PSRepositoryApiKey }
+        BlockPreReleaseVersions = $true
+    }
+    @{
+        Name = 'GitHubPackages'
+        SourceLocation = 'https://nuget.pkg.github.com/zerofailed/index.json'
+        ApiKey = { $env:ZF_BUILD_GITHUB_PACKAGES_TOKEN }
+        Credential = {
+            if ($env:ZF_BUILD_GITHUB_PACKAGES_TOKEN) {
+                [pscredential]::new('github-actions', (ConvertTo-SecureString $env:ZF_BUILD_GITHUB_PACKAGES_TOKEN -AsPlainText -Force))
+            }
+        }
+    }
+)
+
+$PSMarkdownDocsFlattenOutputPath = $true
+$PSMarkdownDocsOutputPath = './docs/functions'
+$PSMarkdownDocsIncludeModulePage = $false
+$CreateGitHubRelease = $true
 
 # Customise the build process
 task . FullBuild
